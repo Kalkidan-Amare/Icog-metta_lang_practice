@@ -20,16 +20,7 @@ MODEL = 'gemini-1.5-flash-latest'
 MAX_CHARS_FOR_LLM = 10000  # Adjust based on model and needs
 
 def summarize_text(text: str) -> str:
-    """
-    Send the input text to the Gemini LLM and return the summary.
     
-    Args:
-        text (str): The text to summarize
-        
-    Returns:
-        str: The generated summary or error message
-    """
-
     if not text or not text.strip():
         return "No data provided to summarize."
 
@@ -42,26 +33,22 @@ def summarize_text(text: str) -> str:
         text = text[:MAX_CHARS_FOR_LLM] + "\n... [CONTENT TRUNCATED FOR LLM INPUT]"
         print(f"Warning: Input text was truncated to {MAX_CHARS_FOR_LLM} characters for LLM.")
 
-    
     try:
         model = genai.GenerativeModel(MODEL)
-        response = model.generate_content(
-            """Please analyze and summarize the following gene data in a clear, structured format:
+        
+        # Create a more structured prompt that explicitly includes the data
+        prompt = f"""Analyze and summarize the following gene data. The data is in Metta format, containing gene information including identifiers, types, chromosomal locations, and properties.
 
-1. Identify the type of data (e.g., gene information, genomic coordinates)
-2. List the key genes and their main characteristics
-3. Highlight any notable patterns or relationships between the genes
-4. Provide a brief biological context if apparent
-
-Data to analyze:
+GENE DATA:
 {text}
 
-Please format the summary in a clear, bullet-point style that's easy to read and understand.""",
+Format the response in clear, bullet-point style."""
+
+        response = model.generate_content(
+            prompt,
             generation_config=genai.types.GenerationConfig(
-                temperature=0.4,  # Lower temperature for more factual summaries
+                temperature=0.4,
                 max_output_tokens=1024,
-                top_p=0.8,  # Slightly more focused sampling
-                top_k=40  # Balanced between diversity and focus
             )
         )
 

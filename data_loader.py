@@ -2,9 +2,6 @@ import os
 import re
 
 def parse_metta_file(content: str) -> str:
-    """
-    Parse Metta file content and format it for LLM processing.
-    """
     # Extract gene information using regex
     gene_pattern = r'\(gene\s+(\S+)\)'
     gene_name_pattern = r'\(gene_name\s+\(gene\s+(\S+)\)\s+(\S+)\)'
@@ -38,6 +35,8 @@ def parse_metta_file(content: str) -> str:
         if 'synonyms' in info:
             gene_info += f"\nSynonyms: {', '.join(info['synonyms'])}"
         formatted_data.append(gene_info)
+
+    print(formatted_data)
     
     return "\n\n".join(formatted_data)
 
